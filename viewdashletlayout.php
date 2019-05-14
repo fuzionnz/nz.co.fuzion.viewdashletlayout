@@ -18,7 +18,6 @@ function viewdashletlayout_civicrm_config(&$config) {
  * @link https://github.com/civicrm/org.civicrm.contactlayout
  */
 function viewdashletlayout_civicrm_contactSummaryBlocks(&$blocks) {
-  // Register our block with the layout editor.
   $dashlets = civicrm_api3('Dashboard', 'get', array(
     'name' => array('LIKE' => '%dashlet_view%'),
     'options' => array('limit' => 0),
@@ -26,12 +25,20 @@ function viewdashletlayout_civicrm_contactSummaryBlocks(&$blocks) {
   if (empty($dashlets['count'])) {
     return;
   }
+  // Provide our own group for these blocks.
+  $blocks += [
+    'views' => [
+      'title' => ts('Views Dashlets'),
+      'icon' => 'fa-tachometer',
+      'blocks' => [],
+    ]
+  ];
   foreach ($dashlets['values'] as $key => $dashlet) {
-    $blocks['core']['blocks'][$dashlet['name']] = [
+    $blocks['views']['blocks'][$dashlet['name']] = [
       'id' => $dashlet['id'],
       'name' => $dashlet['name'],
       'title' => $dashlet['label'],
-      'collapsible' => TRUE,
+      'collapsible' => FALSE,
       'showTitle' => TRUE,
       'content_url' => CRM_Utils_System::url($dashlet['url']),
       'tpl_file' => 'CRM/Viewdashletlayout/Dashlet.tpl',
